@@ -1,50 +1,26 @@
 enum RadioMessage {
     message1 = 49434
 }
-/**
- * light sensor/flashlight
- * 
- * on A button pressed, it will measure light level, and if it detects the light level to be below 100, it will activate a flashlight.
- */
-// This is the light snesor. If light level below 100 it activates flashlight.
+// This is the light sensor. If light level below 100 it activates flashlight.
 input.onButtonPressed(Button.A, function () {
     music.stopAllSounds()
+    basic.clearScreen()
     basic.showNumber(input.lightLevel())
-    if (input.lightLevel() < 100) {
-        music.play(music.createSoundExpression(
-        WaveShape.Sawtooth,
-        1045,
-        0,
-        255,
-        255,
-        500,
-        SoundExpressionEffect.Tremolo,
-        InterpolationCurve.Linear
-        ), music.PlaybackMode.UntilDone)
-        led.setBrightness(255)
-        basic.showLeds(`
-            # # # # #
-            # # # # #
-            # # # # #
-            # # # # #
-            # # # # #
-            `)
-    }
 })
 /**
- * crash sensor
+ * Fall Detection
  * 
  * if it detects a hard impact it will sound an alarm
  */
 input.onGesture(Gesture.SixG, function () {
     music.setVolume(255)
     music.play(music.stringPlayable("C5 - C5 - C5 - - - ", 700), music.PlaybackMode.UntilDone)
-    music.play(music.createSoundExpression(WaveShape.Sawtooth, 1, 5000, 255, 255, 100, SoundExpressionEffect.Warble, InterpolationCurve.Linear), music.PlaybackMode.LoopingInBackground)
+    music.play(music.createSoundExpression(WaveShape.Sawtooth, 1, 5000, 255, 255, 100, SoundExpressionEffect.Warble, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
 })
 /**
  * SOS Signal 
  * 
- * on AB Button pressed it will send a radio signal and sound an alarm
+ * On AB Button pressed it will send a radio signal and sound an alarm
  */
 input.onButtonPressed(Button.AB, function () {
     music.stopAllSounds()
@@ -62,29 +38,61 @@ input.onButtonPressed(Button.AB, function () {
     ), music.PlaybackMode.UntilDone)
 })
 /**
- * RECEPTION OF MESSAGE
+ * Message Reception
  */
 radio.onReceivedString(function (receivedString) {
     music.play(music.createSoundExpression(WaveShape.Square, 1440, 1, 255, 255, 200, SoundExpressionEffect.Tremolo, InterpolationCurve.Logarithmic), music.PlaybackMode.UntilDone)
     basic.showString("msg rcvd")
 })
-/**
- * COMPASS CALIBRATES ON INITIALIZATION
- */
 input.onButtonPressed(Button.B, function () {
     music.stopAllSounds()
-    basic.showNumber(input.compassHeading())
+    basic.showNumber(steps)
 })
 /**
- * THERMOMETER TIME AND DATE through capacitive touchpad on logo
+ * Step Counter
+ * 
+ * Counts steps when device is shaken. On B press, shows total value.
+ */
+input.onGesture(Gesture.Shake, function () {
+    steps += 1
+})
+/**
+ * Thermometer
+ * 
+ * When the touchpad on logo is pressed, shows the current temperature.
  */
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
     music.stopAllSounds()
-    basic.showNumber(input.temperature())
-    basic.showString(timeanddate.dateTime())
+    basic.showString("" + input.temperature() + "C")
 })
 /**
- * on start it sets time to default value
+ * Greeting and Step Counter
  */
-timeanddate.set24HourTime(10, 7, 0)
-timeanddate.setDate(12, 4, 2023)
+let steps = 0
+basic.showString("Hello")
+steps = 0
+/**
+ * Flashlight
+ * 
+ * On A button pressed, it will measure light level, and if it detects the light level to be below 100, it will activate a flashlight.
+ */
+basic.forever(function () {
+    if (input.lightLevel() < 100) {
+        led.setBrightness(255)
+        basic.showLeds(`
+            # # # # #
+            # # # # #
+            # # # # #
+            # # # # #
+            # # # # #
+            `)
+    } else {
+        basic.showLeds(`
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            . . . . .
+            `)
+    }
+})

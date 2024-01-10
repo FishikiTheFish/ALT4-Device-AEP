@@ -7,7 +7,8 @@
         "microphone": "*",
         "radio-broadcast": "*",
         "microbit-pxt-timeanddate": "github:bsiever/microbit-pxt-timeanddate#v2.0.33",
-        "datalogger": "*"
+        "datalogger": "*",
+        "servo": "*"
     },
     "files": [
         "main.blocks",
