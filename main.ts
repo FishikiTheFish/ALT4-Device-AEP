@@ -7,6 +7,9 @@ input.onButtonPressed(Button.A, function () {
     basic.clearScreen()
     basic.showNumber(input.lightLevel())
 })
+input.onGesture(Gesture.TiltLeft, function () {
+    led.enable(false)
+})
 /**
  * Fall Detection
  * 
@@ -14,6 +17,8 @@ input.onButtonPressed(Button.A, function () {
  */
 input.onGesture(Gesture.SixG, function () {
     music.setVolume(255)
+    radio.setGroup(1)
+    radio.sendString("SOS")
     music.play(music.stringPlayable("C5 - C5 - C5 - - - ", 700), music.PlaybackMode.UntilDone)
     music.play(music.createSoundExpression(WaveShape.Sawtooth, 1, 5000, 255, 255, 100, SoundExpressionEffect.Warble, InterpolationCurve.Linear), music.PlaybackMode.UntilDone)
 })
@@ -48,13 +53,16 @@ input.onButtonPressed(Button.B, function () {
     music.stopAllSounds()
     basic.showNumber(steps)
 })
+input.onGesture(Gesture.Shake, function () {
+    steps += 1
+})
 /**
  * Step Counter
  * 
  * Counts steps when device is shaken. On B press, shows total value.
  */
-input.onGesture(Gesture.Shake, function () {
-    steps += 1
+input.onGesture(Gesture.TiltRight, function () {
+    led.enable(true)
 })
 /**
  * Thermometer
@@ -62,7 +70,6 @@ input.onGesture(Gesture.Shake, function () {
  * When the touchpad on logo is pressed, shows the current temperature.
  */
 input.onLogoEvent(TouchButtonEvent.Touched, function () {
-    music.stopAllSounds()
     basic.showString("" + input.temperature() + "C")
 })
 /**
